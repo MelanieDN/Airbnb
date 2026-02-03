@@ -1,0 +1,11 @@
+version: 2
+
+sources:
+ - name: Airbnb
+   description: Airbnb dataset (Airbnb is an online accommodation booking platform that allows users to reserve an entire property or a room, for one or more nights, with a local resident or in tourist accommodation.)
+   tables:
+     - name: listing
+       description: list of the accomodations (informs us about the room_type, the host_response_time and the review_scores_value)
+     - name: calendar
+       description: availiabilities and price of the accomodations from 2022-09-09 to 2023-01-31argumentsarguments
+
