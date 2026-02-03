@@ -9,3 +9,43 @@ sources:
      - name: calendar
        description: availiabilities and price of the accomodations from 2022-09-09 to 2023-01-31argumentsarguments
 
+models:
+   - name: stg_Airbnb__listing
+     description: raw data of list of accomodation list
+     columns:
+       - name: listing_id
+         description: id of the accomodation. Primary key
+         tests:
+           - unique
+           - not_null
+       - name: room_type
+         description: type of accomodation (Entire home/apt, Private room, Shared room)
+         tests:
+         - accepted_values:
+             arguments:
+               values: ['Entire home/apt','Private room','Shared room']
+       - name: host_response_time
+         description: host response time (within an hour, within a few hours, within a day, a few days or more)
+         tests:
+           - accepted_values:
+               arguments:
+                 values: ['within an hour', 'within a few hours', 'within a day', 'a few days or more']
+       - name: review_scores_value
+         description: accommodation rating out of 5
+
+   - name: stg_Airbnb__calendar
+     description: raw data of list of accomodation list
+     columns:
+       - name: listing_id
+         description: id of the accomodation
+       - name: date_date
+         description: date that goes from 2022-09-09 to 2023-01-31
+       - name: available
+         description: True of False. Indicates if the accomodation was rented on the given date
+         tests:
+           - accepted_values:
+               arguments:
+                 values: [true,false]
+                 quote: false
+       - name: price
+         description: price of the accomodation on the given date
