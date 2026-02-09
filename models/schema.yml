@@ -50,47 +50,7 @@ models:
        - name: price
          description: price of the accomodation on the given date
          
-   - name: int_price_category
-     description: calendar table updated with a new price_category column 
-     columns:
-       - name: listing_id
-         description: id of the accomodation
-       - name: date_date
-         description: date that goes from 2022-09-09 to 2023-01-31
-       - name: available
-         description: True of False. Indicates if the accomodation was rented on the given date
-         tests:
-           - accepted_values:
-               arguments:
-                 values: [true,false]
-                 quote: false
-       - name: price
-         description: price of the accomodation on the given date 
-       - name: price_category
-         description: '{{ doc("price_category") }}' 
-         tests:
-           - accepted_values:
-               arguments:
-                 values: ['Budget', 'Mid Range', 'Premium', 'Luxury', 'Ultra Luxury']
-
-   - name: int_rented
-     description: calendar table updated with the available columns replaced by a rented one 
-     columns:
-       - name: listing_id
-         description: id of the accomodation
-       - name: date_date
-         description: date that goes from 2022-09-09 to 2023-01-31
-       - name: price
-         description: price of the accomodation on the given date
-       - name: rented
-         description: Is the accomodation rented at the given date ? 1 for yes and 0 for no
-         tests:
-           - accepted_values:
-               arguments:
-                 values: [0,1]
-                 quote: false
-
-   - name: int_review_score_category
+   - name: int_listing_updated
      description: listing table with a new review_score_category column
      columns:
        - name: listing_id
@@ -142,14 +102,15 @@ models:
                  values: [0,1]
                  quote: false
 
-   - name: int_listing_updated
-     description: listing table updated with the date_date column and the new rented and review_score_category ones
+   - name: int_join_calendar_listing
+     description: join of the new tables calendar_updated and listing_updated
      columns:
        - name: listing_id
          description: id of the accomodation. Primary key
+         tests:
            - not_null
        - name: date_date
-         description: date that goes from 2022-09-09 to 2023-01-31 
+         description: date that goes from 2022-09-09 to 2023-01-31
        - name: room_type
          description: type of accomodation (Entire home/apt, Private room, Shared room)
          tests:
@@ -162,6 +123,14 @@ models:
            - accepted_values:
                arguments:
                  values: ['within an hour', 'within a few hours', 'within a day', 'a few days or more']
+       - name: price
+         description: price of the accomodation on the given date 
+       - name: price_category
+         description: '{{ doc("price_category") }}' 
+         tests:
+           - accepted_values:
+               arguments:
+                 values: ['Budget', 'Mid Range', 'Premium', 'Luxury', 'Ultra Luxury'] 
        - name: review_scores_value
          description: accommodation rating out of 5
        - name: review_score_category
@@ -176,4 +145,4 @@ models:
            - accepted_values:
                arguments:
                  values: [0,1]
-                 quote: false
+                 quote: false 
