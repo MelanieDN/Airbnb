@@ -7,11 +7,11 @@ sources:
      - name: listing
        description: list of the accomodations (informs us about the room_type, the host_response_time and the review_scores_value)
      - name: calendar
-       description: availiabilities and price of the accomodations from 2022-09-09 to 2023-01-31argumentsarguments
+       description: availiabilities and price of the accomodations from 2022-09-09 to 2023-01-31
 
 models:
    - name: stg_Airbnb__listing
-     description: raw data of list of accomodation list
+     description: raw data of the accomodation list
      columns:
        - name: listing_id
          description: id of the accomodation. Primary key
@@ -25,21 +25,21 @@ models:
              arguments:
                values: ['Entire home/apt','Private room','Shared room']
        - name: host_response_time
-         description: host response time (within an hour, within a few hours, within a day, a few days or more)
+         description: the average response time displayed in Airbnb to customers (within an hour, within a few hours, within a day, a few days or more)
          tests:
            - accepted_values:
                arguments:
                  values: ['within an hour', 'within a few hours', 'within a day', 'a few days or more']
        - name: review_scores_value
-         description: accommodation rating out of 5
+         description: The average review score of each accommodation. Rating out of 5.
 
    - name: stg_Airbnb__calendar
-     description: raw data of list of accomodation list
+     description: raw data of the bookings from 2022-09-09 to 2023-01-31. On the 09-09-2022, only 101 accomodations are represented. For all the other dates, there are 500 accomodations. 
      columns:
        - name: listing_id
          description: id of the accomodation
        - name: date_date
-         description: date that goes from 2022-09-09 to 2023-01-31
+         description: date of the rental or non-rental. Goes from 2022-09-09 to 2023-01-31
        - name: available
          description: True of False. Indicates if the accomodation was rented on the given date
          tests:
@@ -49,6 +49,9 @@ models:
                  quote: false
        - name: price
          description: price of the accomodation on the given date
+         tests:
+           - not_null
+           - is_positive        
          
    - name: int_listing_updated
      description: listing table with a new review_score_category column
@@ -65,13 +68,13 @@ models:
              arguments:
                values: ['Entire home/apt','Private room','Shared room']
        - name: host_response_time
-         description: host response time (within an hour, within a few hours, within a day, a few days or more)
+         description: the average response time displayed in Airbnb to customers (within an hour, within a few hours, within a day, a few days or more)
          tests:
            - accepted_values:
                arguments:
                  values: ['within an hour', 'within a few hours', 'within a day', 'a few days or more']
        - name: review_scores_value
-         description: accommodation rating out of 5
+         description: The average review score of each accommodation. Rating out of 5.
        - name: review_score_category
          description: '{{ doc("review_score_category") }}' 
          tests:
@@ -80,14 +83,17 @@ models:
                  values: ['Premium', 'High Quality', 'Fair', 'Below Average', 'Low Performing']
    
    - name: int_calendar_updated
-     description: new calendar table with the new rented and price category columns 
+     description: new calendar table with new rented and price_category columns 
      columns:
        - name: listing_id
          description: id of the accomodation
        - name: date_date
-         description: date that goes from 2022-09-09 to 2023-01-31
+         description: date of the rental or non-rental. Goes from 2022-09-09 to 2023-01-31
        - name: price
          description: price of the accomodation on the given date 
+         tests:
+           - not_null
+           - is_positive
        - name: price_category
          description: '{{ doc("price_category") }}' 
          tests:
@@ -95,7 +101,7 @@ models:
                arguments:
                  values: ['Budget', 'Mid Range', 'Premium', 'Luxury', 'Ultra Luxury']
        - name: rented
-         description: Is the accomodation rented at the given date ? 1 for yes and 0 for no
+         description: indicates the availability of the rental. 1 for rented and 0 for no rented
          tests:
            - accepted_values:
                arguments:
@@ -106,11 +112,11 @@ models:
      description: join of the new tables calendar_updated and listing_updated
      columns:
        - name: listing_id
-         description: id of the accomodation. Primary key
+         description: id of the accomodation.
          tests:
            - not_null
        - name: date_date
-         description: date that goes from 2022-09-09 to 2023-01-31
+         description: date of the rental or non-rental. Goes from 2022-09-09 to 2023-01-31
        - name: room_type
          description: type of accomodation (Entire home/apt, Private room, Shared room)
          tests:
@@ -118,13 +124,16 @@ models:
              arguments:
                values: ['Entire home/apt','Private room','Shared room']
        - name: host_response_time
-         description: host response time (within an hour, within a few hours, within a day, a few days or more)
+         description: the average response time displayed in Airbnb to customers (within an hour, within a few hours, within a day, a few days or more)
          tests:
            - accepted_values:
                arguments:
                  values: ['within an hour', 'within a few hours', 'within a day', 'a few days or more']
        - name: price
          description: price of the accomodation on the given date 
+         tests:
+           - not_null
+           - is_positive
        - name: price_category
          description: '{{ doc("price_category") }}' 
          tests:
@@ -132,7 +141,7 @@ models:
                arguments:
                  values: ['Budget', 'Mid Range', 'Premium', 'Luxury', 'Ultra Luxury'] 
        - name: review_scores_value
-         description: accommodation rating out of 5
+         description: The average review score of each accommodation. Rating out of 5.
        - name: review_score_category
          description: '{{ doc("review_score_category") }}' 
          tests:
@@ -140,9 +149,42 @@ models:
                arguments:
                  values: ['Premium', 'High Quality', 'Fair', 'Below Average', 'Low Performing']
        - name: rented
-         description: Is the accomodation rented at the given date ? 1 for yes and 0 for no
+         description: indicates the availability of the rental. 1 for rented and 0 for no rented
          tests:
            - accepted_values:
                arguments:
                  values: [0,1]
                  quote: false 
+  
+   - name: occupancy_rate_by_date
+     description: ratio of booked accomodations for each date
+     columns:
+       - name: date_date
+         description: date of the rental or non-rental. Goes from 2022-09-09 to 2023-01-31
+       - name: occupancy_rate
+         description: percentage of occupied accomodations at the given date
+
+   - name: occupancy_rate_by_price_category
+     description: ratio of booked accomodations for each price category
+     columns:
+       - name: date_date
+         description: date of the rental or non-rental. Goes from 2022-09-09 to 2023-01-31
+       - name: occupancy_rate
+         description: percentage of occupied accomodations for each price category
+  
+   - name: occupancy_rate_by_response_time
+     description: ratio of booked accomodations according to the response time
+     columns:
+       - name: date_date
+         description: date of the rental or non-rental. Goes from 2022-09-09 to 2023-01-31
+       - name: occupancy_rate
+         description: percentage of occupied accomodations according to the response time
+
+   - name: occupancy_rate_by_score review
+     description: ratio of booked accomodations for each score review category
+     columns:
+       - name: date_date
+         description: date of the rental or non-rental. Goes from 2022-09-09 to 2023-01-31
+       - name: occupancy_rate
+         description: percentage of occupied accomodations for each score review category
+
